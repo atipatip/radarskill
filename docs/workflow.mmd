@@ -1,0 +1,48 @@
+flowchart LR
+  %% Roles legend
+  subgraph Roles[Roles]
+    R1[Data Engineer]
+    R2[Radar Domain Lead]
+    R3[Mosaic / Geospatial Engineer]
+    R4[Nowcast Engineer]
+    R5[QA / Verification Engineer]
+    R6[SRE / DevOps]
+    R7[API / Application Engineer]
+    R8[Service Owner]
+    R9[Security / Governance]
+  end
+
+  A[UF Ingestion
+Read .uf files
+Parse time and fields] --> B[QC and Validation
+Clutter mask
+Sanity checks
+Flags]
+  B --> C[Polar to Cartesian
+Common CRS
+Common grid]
+  C --> D[Mosaic NCK + NGK
+Overlap handling
+Missing data rules]
+  D --> E[Rain-rate Preparation
+dBZ to Z to R
+Threshold / denoise]
+  E --> F[Motion Estimation
+LK / DARTS / other]
+  F --> G1[Deterministic Nowcast
+Extrapolation
+15-120 min]
+  F --> G2[Ensemble Nowcast
+STEPS / uncertainty]
+  G1 --> H[Verification
+CSI / FSS / RMSE
+By lead time]
+  G2 --> H
+  H --> I[Publish
+NetCDF / GeoTIFF / PNG / API]
+
+  R6 -. monitoring / alerts .- A
+  R6 -. deploy / rollback .- I
+  R9 -. access control / audit .- A
+  R9 -. metadata / versioning .- I
+  R8 -. KPI / SLA / acceptance .- H
